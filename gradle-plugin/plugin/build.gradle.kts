@@ -4,14 +4,14 @@ plugins {
     `maven-publish`
 }
 
-group = "ank"
+group = "com.kategory.ank"
 version = "1.0"
 
 gradlePlugin {
     (plugins) {
-        "ankPlugin" {
-            id = "ank-plugin"
-            implementationClass = "plugin.AnkPlugin"
+        "ankGradlePlugin" {
+            id = "ank-gradle-plugin"
+            implementationClass = "com.kategory.ank.plugin.AnkGradlePlugin"
         }
     }
 }
