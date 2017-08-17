@@ -18,7 +18,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$parent.ext.kotlin_version"
     compile "org.jetbrains:markdown:0.1.25"
-    compile "com.github.kategory:kategory:-SNAPSHOT"
+    compile "com.github.kategory:kategory:master-SNAPSHOT"
     compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:$parent.ext.kotlin_version"
     compile "io.kategory:kategory-annotations:0.3.6"
     kapt "io.kategory:kategory-annotations-compile:0.3.6"
