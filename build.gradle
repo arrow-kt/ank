@@ -1,0 +1,24 @@
+buildscript {
+    ext {
+        kotlin_version = '1.2-M2'
+        junit_version = '4.12'
+    }
+
+    repositories {
+        jcenter()
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+
+    repositories {
+        jcenter()
+        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
+        maven { url 'https://jitpack.io' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+    }
+}

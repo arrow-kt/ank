@@ -1,0 +1,16 @@
+apply plugin: 'kotlin'
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+    test.java.srcDirs += 'src/test/kotlin'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    compile project(':core')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$parent.ext.kotlin_version"
+
+    testCompile "junit:junit:$parent.ext.junit_version"
+}
