@@ -2,18 +2,21 @@ package com.kategory.gradle.plugin.ank;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.JavaExec;
 
 public class AnkPlugin implements Plugin<Project> {
-  static final String TASK_NAME = "ank";
+  private static final String EXTENSION_NAME = "ank";
+  private static final String TASK_NAME = "runAnk";
 
   @Override
   public void apply(Project target) {
-    // TODO This is a test!
-    SourceSetContainer sourceSets = (SourceSetContainer)
-      target.getProperties().get("sourceSets");
-    sourceSets.getByName("main").getRuntimeClasspath();
-
-    target.getTasks().create(TASK_NAME, AnkTask.class);
+    AnkExtension extension = new AnkExtension();
+    target.getExtensions().add(EXTENSION_NAME, extension);
+    target.afterEvaluate(project -> {
+      JavaExec task = target.getTasks().create(TASK_NAME, JavaExec.class);
+      task.setClasspath(extension.classpath);
+      task.setMain("com.kategory.ank.main");
+      task.setArgs(extension.arguments);
+    });
   }
 }

@@ -28,9 +28,8 @@ dependencies {
 }
 
 ank {
-    classpath sourceSets.main.runtimeClasspath
-    main = "com.kategory.ank.main"
-    args "${project.rootDir}/sample/src/main/docs",
+    classpath = sourceSets.main.runtimeClasspath
+    arguments = ["${project.rootDir}/sample/src/main/docs",
             "${project.rootDir}/sample/src/main/site",
-            "-classpath", "${sourceSets.main.runtimeClasspath.join(":")}"
+            "-classpath", "${sourceSets.main.runtimeClasspath.join(":")}"]
 }
