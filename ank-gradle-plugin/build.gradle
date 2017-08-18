@@ -1,0 +1,27 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven'
+
+group = 'com.kategory.gradle.plugin'
+version = '0.1.0'
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+gradlePlugin {
+    plugins {
+        ank {
+            id = 'ank-gradle-plugin'
+            implementationClass =
+                    'com.kategory.gradle.plugin.ank.AnkPlugin'
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}

@@ -5,11 +5,16 @@ buildscript {
     }
 
     repositories {
+        maven {
+            url = uri("repo")
+        }
         jcenter()
         maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath group: 'com.kategory.gradle.plugin', name: 'ank-gradle-plugin',
+                version: '0.1.0'
     }
 }
 

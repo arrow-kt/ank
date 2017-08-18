@@ -1,8 +1,7 @@
-@file:JvmName("Main")
-package com.kategory.ank.sample
+@file:JvmName("main")
+package com.kategory.ank
 
 import kategory.*
-import com.kategory.ank.*
 import java.io.File
 
 typealias Target<A> = Either<Throwable, A>
