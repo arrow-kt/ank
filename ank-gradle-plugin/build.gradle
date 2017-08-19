@@ -1,7 +1,7 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven'
 
-group = 'com.kategory.gradle.plugin'
+group = 'io.kategory.gradle.plugin'
 version = '0.1.0'
 
 dependencies {
@@ -13,7 +13,7 @@ gradlePlugin {
         ank {
             id = 'ank-gradle-plugin'
             implementationClass =
-                    'com.kategory.gradle.plugin.ank.AnkPlugin'
+                    'io.kategory.gradle.plugin.ank.AnkPlugin'
         }
     }
 }

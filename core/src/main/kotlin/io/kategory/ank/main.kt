@@ -1,5 +1,5 @@
 @file:JvmName("main")
-package com.kategory.ank
+package io.kategory.ank
 
 import kategory.*
 import java.io.File

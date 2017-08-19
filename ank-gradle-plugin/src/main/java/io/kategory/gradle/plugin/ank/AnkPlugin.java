@@ -1,4 +1,4 @@
-package com.kategory.gradle.plugin.ank;
+package io.kategory.gradle.plugin.ank;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -15,7 +15,7 @@ public class AnkPlugin implements Plugin<Project> {
     target.afterEvaluate(project -> {
       JavaExec task = target.getTasks().create(TASK_NAME, JavaExec.class);
       task.setClasspath(extension.classpath);
-      task.setMain("com.kategory.ank.main");
+      task.setMain("io.kategory.ank.main");
       task.setArgs(extension.arguments);
     });
   }

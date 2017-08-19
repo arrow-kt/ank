@@ -1,4 +1,4 @@
-package com.kategory.gradle.plugin.ank;
+package io.kategory.gradle.plugin.ank;
 
 
 import org.gradle.api.file.FileCollection;

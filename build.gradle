@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath group: 'com.kategory.gradle.plugin', name: 'ank-gradle-plugin',
+        classpath group: 'io.kategory.gradle.plugin', name: 'ank-gradle-plugin',
                 version: '0.1.0'
     }
 }

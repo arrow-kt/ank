@@ -1,4 +1,4 @@
-package com.kategory.ank
+package io.kategory.ank
 
 import kategory.*
 import org.intellij.markdown.ast.ASTNode
