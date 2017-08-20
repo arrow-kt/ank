@@ -7,7 +7,6 @@ buildscript {
     repositories {
         jcenter()
         maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
-        maven { url "http://dl.bintray.com/kategory/maven" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
