@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'ank-gradle-plugin'
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
@@ -9,8 +10,14 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compile project(':core')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$parent.ext.kotlin_version"
 
     testCompile "junit:junit:$parent.ext.junit_version"
+}
+
+ank {
+    classpath = sourceSets.main.runtimeClasspath
+    arguments = ["${projectDir}/src/main/docs",
+                 "${projectDir}/src/main/site",
+                 "-classpath", "${sourceSets.main.runtimeClasspath.join(":")}"]
 }

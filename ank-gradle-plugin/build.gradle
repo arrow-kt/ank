@@ -1,10 +1,10 @@
 apply plugin: 'java-gradle-plugin'
-apply plugin: 'maven'
 
-group = 'io.kategory.gradle.plugin'
-version = '0.1.0'
+group = 'io.kategory'
+version = '0.1.1'
 
 dependencies {
+    compile project(':ank-core')
     testCompile 'junit:junit:4.12'
 }
 
@@ -12,16 +12,9 @@ gradlePlugin {
     plugins {
         ank {
             id = 'ank-gradle-plugin'
-            implementationClass =
-                    'io.kategory.gradle.plugin.ank.AnkPlugin'
+            implementationClass = 'io.kategory.ank.AnkPlugin'
         }
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri('../repo'))
-        }
-    }
-}
+apply from: '../gradle-mvn-push.gradle'

@@ -1,6 +1,9 @@
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'ank-gradle-plugin'
+apply from: 'generated-kotlin-sources.gradle'
+
+group = 'io.kategory'
+version = '0.1.1'
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
@@ -27,9 +30,4 @@ dependencies {
     testCompile "junit:junit:$parent.ext.junit_version"
 }
 
-ank {
-    classpath = sourceSets.main.runtimeClasspath
-    arguments = ["${project.rootDir}/sample/src/main/docs",
-            "${project.rootDir}/sample/src/main/site",
-            "-classpath", "${sourceSets.main.runtimeClasspath.join(":")}"]
-}
+apply from: '../gradle-mvn-push.gradle'
