@@ -9,9 +9,9 @@ import java.io.File
     data class GetFileCandidates(val target: File) : AnkOps<ListKW<File>>()
     data class ReadFile(val source: File) : AnkOps<String>()
     data class ParseMarkdown(val markdown: String) : AnkOps<ASTNode>()
-    data class ExtractCode(val source: String, val tree: ASTNode) : AnkOps<String>()
-    data class CompileCode(val origin: File, val code: String, val compilerArgs: ListKW<String>) : AnkOps<Unit>()
-    data class ReplaceAnkToKotlin(val markdown: String) : AnkOps<String>()
+    data class ExtractCode(val source: String, val tree: ASTNode) : AnkOps<ListKW<Snippet>>()
+    data class CompileCode(val origin: File, val snippets: ListKW<Snippet>, val compilerArgs: ListKW<String>) : AnkOps<CompiledMarkdown>()
+    data class ReplaceAnkToKotlin(val compilationResults: CompiledMarkdown) : AnkOps<String>()
     data class GenerateFiles(val candidates: ListKW<File>, val newContents: ListKW<String>) : AnkOps<ListKW<File>>()
     companion object : FreeInstances<AnkOpsHK>
 }
@@ -28,14 +28,14 @@ fun readFile(source: File): Free<AnkOpsHK, String> =
 fun parseMarkdown(markdown: String): Free<AnkOpsHK, ASTNode> =
         Free.liftF(AnkOps.ParseMarkdown(markdown))
 
-fun extractCode(source: String, tree: ASTNode): Free<AnkOpsHK, String> =
+fun extractCode(source: String, tree: ASTNode): Free<AnkOpsHK, ListKW<Snippet>> =
         Free.liftF(AnkOps.ExtractCode(source, tree))
 
-fun compileCode(origin: File, code: String, compilerArgs: ListKW<String>): Free<AnkOpsHK, Unit> =
-        Free.liftF(AnkOps.CompileCode(origin, code, compilerArgs))
+fun compileCode(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): Free<AnkOpsHK, CompiledMarkdown> =
+        Free.liftF(AnkOps.CompileCode(origin, snippets, compilerArgs))
 
-fun replaceAnkToKotlin(markdown: String): Free<AnkOpsHK, String> =
-        Free.liftF(AnkOps.ReplaceAnkToKotlin(markdown))
+fun replaceAnkToKotlin(compilationResults: CompiledMarkdown): Free<AnkOpsHK, String> =
+        Free.liftF(AnkOps.ReplaceAnkToKotlin(compilationResults))
 
 fun generateFiles(candidates: ListKW<File>, newContents: ListKW<String>): Free<AnkOpsHK, ListKW<File>> =
         Free.liftF(AnkOps.GenerateFiles(candidates, newContents))

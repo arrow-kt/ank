@@ -5,6 +5,8 @@ import org.intellij.markdown.ast.ASTNode
 import java.io.File
 
 const val AnkBlock = "kotlin:ank"
+const val AnkSilentBlock = "kotlin:ank:silent"
+const val KotlinBlock = "kotlin"
 
 fun ank(source: File, target: File, compilerArgs: ListKW<String>) =
         AnkOps.binding {
@@ -12,11 +14,12 @@ fun ank(source: File, target: File, compilerArgs: ListKW<String>) =
             val files: ListKW<File> = getFileCandidates(targetDirectory).bind()
             val filesContents: ListKW<String> = files.map(::readFile).k().sequence().bind()
             val parsedMarkDowns: ListKW<ASTNode> = filesContents.map(::parseMarkdown).k().sequence().bind()
-            val sources: ListKW<String> = ListKW(parsedMarkDowns.mapIndexed { n, tree ->
+            val allSnippets: ListKW<ListKW<Snippet>> = parsedMarkDowns.mapIndexed { n, tree ->
                 extractCode(filesContents.list[n], tree)
-            }).k().sequence().bind()
-            ListKW(sources.mapIndexed { n, s -> compileCode(files.list[n], s, compilerArgs) }).k().sequence().bind()
-            val replacedResults: ListKW<String> = filesContents.map(::replaceAnkToKotlin).k().sequence().bind()
+            }.k().sequence().bind()
+            val compilationResults =
+                    ListKW(allSnippets.mapIndexed { n, s -> compileCode(files.list[n], s, compilerArgs) }).k().sequence().bind()
+            val replacedResults: ListKW<String> = compilationResults.mapIndexed { n , c ->  replaceAnkToKotlin(c) }.k().sequence().bind()
             val resultingFiles: ListKW<File> = generateFiles(files, replacedResults).bind()
             yields(resultingFiles)
         }
