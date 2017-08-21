@@ -1,0 +1,44 @@
+buildscript {
+    ext {
+        kotlin_version = '1.1.4'
+        junit_version = '4.12'
+    }
+
+    repositories {
+        jcenter()
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath group: 'io.kategory', name: 'ank-gradle-plugin', version: '0.1.2'
+    }
+}
+
+subprojects { project ->
+
+    apply plugin: 'com.jfrog.bintray'
+    bintray {
+        user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+        key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+        configurations = ['archives']
+        pkg {
+            repo = 'maven'
+            name = POM_ARTIFACT_ID
+            userOrg = POM_DEVELOPER_ID
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/kategory/ank.git'
+        }
+    }
+}
+
+allprojects {
+
+    repositories {
+        jcenter()
+        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
+        maven { url 'https://jitpack.io' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "http://dl.bintray.com/kategory/maven" }
+    }
+}

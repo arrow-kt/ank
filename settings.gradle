@@ -1,2 +1,5 @@
+rootProject.name = 'ank'
+include 'ank-core'
+include 'ank-gradle-plugin'
+include 'sample'
 
-include 'cli', 'core', 'gradle-plugin'
