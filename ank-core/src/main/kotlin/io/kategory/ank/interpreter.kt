@@ -13,6 +13,8 @@ import java.net.URL
 import java.net.URLClassLoader
 import javax.script.ScriptEngineManager
 
+const val KotlinScriptEngineExtension = "kts"
+
 @Suppress("UNCHECKED_CAST")
 inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
         object : FunctionK<AnkOpsHK, F> {
@@ -84,7 +86,7 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
 fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
     val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
     val seManager = ScriptEngineManager(classLoader)
-    val engine = seManager.getEngineByExtension("kts")!!
+    val engine = seManager.getEngineByExtension(KotlinScriptEngineExtension)!!
     val evaledSnippets = snippets.list.map { snippet ->
         val result = engine.eval(snippet.code)
         val resultString = Option.fromNullable(result).fold({ "// Unit" }, { "// $it" })
