@@ -63,7 +63,7 @@ fun parseMarkDownImpl(markdown: String): ASTNode =
         MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
 
 
-data class CompiledMarkdown(val origin: File, val snippets : ListKW<Snippet>)
+data class CompiledMarkdown(val origin: File, val snippets: ListKW<Snippet>)
 data class Snippet(val silent: Boolean, val startOffset: Int, val endOffset: Int, val code: String, val result: Option<String> = Option.None)
 
 fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
@@ -81,8 +81,8 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
     return sb.k()
 }
 
-fun compileCodeImpl(origin: File, snippets : ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
-    val classLoader = URLClassLoader(compilerArgs.map {  URL(it) }.ev().list.toTypedArray())
+fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
+    val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
     val seManager = ScriptEngineManager(classLoader)
     val engine = seManager.getEngineByExtension("kts")!!
     val evaledSnippets = snippets.list.map { snippet ->
@@ -94,27 +94,16 @@ fun compileCodeImpl(origin: File, snippets : ListKW<Snippet>, compilerArgs: List
     return CompiledMarkdown(origin, evaledSnippets)
 }
 
-fun replaceAnkToKotlinImpl(compiledMarkdown: CompiledMarkdown): String {
-    val contents = mutableListOf<Char>()
-    var offset = 0
-    val filesContents = compiledMarkdown.origin.readText()
-    filesContents.toCharArray().map {
-        val endSnippet = compiledMarkdown.snippets.find {
-            it.endOffset == offset
-        }
-        val maybeNewContent = endSnippet.flatMap { it.result }
-        maybeNewContent.map {
-           it.toCharArray().forEach {
-               contents.add(it)
-           }
-        }
-        contents.add(it)
-        offset++
-    }
-    return contents.joinToString("")
-            .replace(AnkSilentBlock, KotlinBlock)
-            .replace(AnkBlock, KotlinBlock)
-}
+fun replaceAnkToKotlinImpl(compiledMarkdown: CompiledMarkdown): String =
+        compiledMarkdown.origin.readText().toCharArray().foldIndexed(emptyList<Char>(), { n, acc, char ->
+            compiledMarkdown.snippets
+                    .find { it.endOffset == n }
+                    .flatMap { it.result }
+                    .map { it.toCharArray().map { it } }
+                    .fold({ acc + char }, { (acc + it) + char })
+        }).joinToString("")
+                .replace(AnkSilentBlock, KotlinBlock)
+                .replace(AnkBlock, KotlinBlock)
 
 fun generateFilesImpl(candidates: ListKW<File>, newContents: ListKW<String>): ListKW<File> =
         ListKW(candidates.mapIndexed { n, file ->
