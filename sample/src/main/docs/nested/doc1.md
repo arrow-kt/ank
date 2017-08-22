@@ -1,20 +1,13 @@
-Welcome to doc one
-
-Text before x
-
+Some description here
 ```kotlin:ank
 import kategory.*
-val x : Try<Int> = Try { 0 }
+val x = Try { 0 }
 ```
-
 Text before y
-
-```kotlin:ank
-val y : Try<Int> = Try { 1 }
+```kotlin:ank:silent
+Try { 1 }
 ```
-
 Text before z
-
 ```kotlin:ank
-val z : Try<Int> = Try { 2 }
+Try { 3 }
 ```

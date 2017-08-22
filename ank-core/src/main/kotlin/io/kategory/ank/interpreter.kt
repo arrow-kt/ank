@@ -2,12 +2,18 @@ package io.kategory.ank
 
 import kategory.*
 import org.intellij.markdown.MarkdownElementTypes.CODE_FENCE
-import org.intellij.markdown.ast.*
+import org.intellij.markdown.ast.ASTNode
+import org.intellij.markdown.ast.accept
+import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.ast.visitors.RecursiveVisitor
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
+import javax.script.ScriptEngineManager
+
+const val KotlinScriptEngineExtension = "kts"
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
@@ -20,8 +26,8 @@ inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = m
                     is AnkOps.ReadFile -> ME.catch({ readFileImpl(op.source) })
                     is AnkOps.ParseMarkdown -> ME.catch({ parseMarkDownImpl(op.markdown) })
                     is AnkOps.ExtractCode -> ME.catch({ extractCodeImpl(op.source, op.tree) })
-                    is AnkOps.CompileCode -> ME.catch({ compileCodeImpl(op.origin, op.code, op.compilerArgs) })
-                    is AnkOps.ReplaceAnkToKotlin -> ME.catch({ replaceAnkToKotlinImpl(op.markdown) })
+                    is AnkOps.CompileCode -> ME.catch({ compileCodeImpl(op.origin, op.snippets, op.compilerArgs) })
+                    is AnkOps.ReplaceAnkToKotlin -> ME.catch({ replaceAnkToKotlinImpl(op.compilationResults) })
                     is AnkOps.GenerateFiles -> ME.catch({ generateFilesImpl(op.candidates, op.newContents) })
                 } as HK<F, A>
             }
@@ -58,40 +64,53 @@ fun readFileImpl(source: File): String =
 fun parseMarkDownImpl(markdown: String): ASTNode =
         MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
 
-fun extractCodeImpl(source: String, tree: ASTNode): String {
-    val sb = StringBuilder()
+
+data class CompiledMarkdown(val origin: File, val snippets: ListKW<Snippet>)
+data class Snippet(val silent: Boolean, val startOffset: Int, val endOffset: Int, val code: String, val result: Option<String> = Option.None)
+
+fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
+    val sb = mutableListOf<Snippet>()
     tree.accept(object : RecursiveVisitor() {
         override fun visitNode(node: ASTNode) {
             if (node.type == CODE_FENCE) {
-                sb.append("\n")
                 val fence = node.getTextInNode(source)
                 val code = fence.split("\n").drop(1).dropLast(1).joinToString("\n")
-                sb.append(code)
+                sb.add(Snippet(fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
             }
             super.visitNode(node)
         }
     })
-    return sb.toString()
+    return sb.k()
 }
 
-fun compileCodeImpl(origin: File, source: String, compilerArgs: ListKW<String>): Unit {
-    val tmpFile = createTempFile(prefix = origin.name + "__", suffix = ".kt")
-    tmpFile.printWriter().use { it.println(source) }
-    K2JVMCompiler.main((
-            compilerArgs +
-                    tmpFile.absolutePath
-            ).toTypedArray())
-    tmpFile.delete()
+fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
+    val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
+    val seManager = ScriptEngineManager(classLoader)
+    val engine = seManager.getEngineByExtension(KotlinScriptEngineExtension)!!
+    val evaledSnippets = snippets.list.map { snippet ->
+        val result = engine.eval(snippet.code)
+        val resultString = Option.fromNullable(result).fold({ "// Unit" }, { "// $it" })
+        if (snippet.silent) snippet
+        else snippet.copy(result = "\n```kotlin\n$resultString\n```".some())
+    }.k()
+    return CompiledMarkdown(origin, evaledSnippets)
 }
 
-fun replaceAnkToKotlinImpl(markDown: String): String =
-        markDown.replace(AnkBlock, "kotlin")
+fun replaceAnkToKotlinImpl(compiledMarkdown: CompiledMarkdown): String =
+        compiledMarkdown.origin.readText().toCharArray().foldIndexed(emptyList<Char>(), { n, acc, char ->
+            compiledMarkdown.snippets
+                    .find { it.endOffset == n }
+                    .flatMap { it.result }
+                    .map { it.toCharArray().map { it } }
+                    .fold({ acc + char }, { (acc + it) + char })
+        }).joinToString("")
+                .replace(AnkSilentBlock, KotlinBlock)
+                .replace(AnkBlock, KotlinBlock)
 
 fun generateFilesImpl(candidates: ListKW<File>, newContents: ListKW<String>): ListKW<File> =
         ListKW(candidates.mapIndexed { n, file ->
             file.printWriter().use {
                 it.print(newContents.list[n])
             }
-            println("ank: processed -> ${file.absolutePath}")
             file
         })

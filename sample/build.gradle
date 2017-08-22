@@ -9,6 +9,12 @@ sourceSets {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$parent.ext.kotlin_version"
 
@@ -16,8 +22,7 @@ dependencies {
 }
 
 ank {
+    source = file("src/main/docs")
+    target = file("build/site")
     classpath = sourceSets.main.runtimeClasspath
-    arguments = ["${projectDir}/src/main/docs",
-                 "${projectDir}/src/main/site",
-                 "-classpath", "${sourceSets.main.runtimeClasspath.join(":")}"]
 }
