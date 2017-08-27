@@ -10,16 +10,17 @@ const val KotlinBlock = "kotlin"
 
 fun ank(source: File, target: File, compilerArgs: ListKW<String>) =
         AnkOps.binding {
+            val T = ListKW.traverse()
             val targetDirectory: File = createTarget(source, target).bind()
             val files: ListKW<File> = getFileCandidates(targetDirectory).bind()
-            val filesContents: ListKW<String> = files.map(::readFile).k().sequence().bind()
-            val parsedMarkDowns: ListKW<ASTNode> = filesContents.map(::parseMarkdown).k().sequence().bind()
+            val filesContents: ListKW<String> = files.map(::readFile).k().sequence(T).bind()
+            val parsedMarkDowns: ListKW<ASTNode> = filesContents.map(::parseMarkdown).k().sequence(T).bind()
             val allSnippets: ListKW<ListKW<Snippet>> = parsedMarkDowns.mapIndexed { n, tree ->
                 extractCode(filesContents.list[n], tree)
-            }.k().sequence().bind()
+            }.k().sequence(T).bind()
             val compilationResults =
-                    ListKW(allSnippets.mapIndexed { n, s -> compileCode(files.list[n], s, compilerArgs) }).k().sequence().bind()
-            val replacedResults: ListKW<String> = compilationResults.mapIndexed { n , c ->  replaceAnkToKotlin(c) }.k().sequence().bind()
+                    ListKW(allSnippets.mapIndexed { n, s -> compileCode(files.list[n], s, compilerArgs) }).k().sequence(T).bind()
+            val replacedResults: ListKW<String> = compilationResults.mapIndexed { n , c ->  replaceAnkToKotlin(c) }.k().sequence(T).bind()
             val resultingFiles: ListKW<File> = generateFiles(files, replacedResults).bind()
             yields(resultingFiles)
         }
