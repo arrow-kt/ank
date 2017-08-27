@@ -24,5 +24,5 @@ fun ank(source: File, target: File, compilerArgs: ListKW<String>) =
             yields(resultingFiles)
         }
 
-fun <A> ListKW<Free<AnkOpsHK, A>>.sequence(T: Traverse<ListKWHK> = traverse()): Free<AnkOpsHK, ListKW<A>> =
+fun <A> ListKW<Free<AnkOpsHK, A>>.sequence(T: Traverse<ListKWHK> = ListKW.traverse()): Free<AnkOpsHK, ListKW<A>> =
         T.sequence(this, AnkOps).ev().map { it.ev() }
