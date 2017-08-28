@@ -3,7 +3,7 @@ apply plugin: 'kotlin-kapt'
 apply from: 'generated-kotlin-sources.gradle'
 
 group = 'io.kategory'
-version = '0.1.2'
+version = '0.1.3'
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
@@ -22,11 +22,11 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$parent.ext.kotlin_version"
     compile "org.jetbrains:markdown:0.1.25"
-    compile "com.github.kategory:kategory:master-SNAPSHOT"
-    compile "io.kategory:kategory-annotations:0.3.6"
+    compile "io.kategory:kategory:0.3.5"
+    compile "io.kategory:kategory-annotations:0.3.7"
     compile "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlin_version"
-    kapt "io.kategory:kategory-annotations-compile:0.3.6"
+    kapt "io.kategory:kategory-annotations-compile:0.3.7"
 
     testCompile "junit:junit:$parent.ext.junit_version"
 }
