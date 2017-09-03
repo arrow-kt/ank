@@ -27,7 +27,7 @@ class AnkPlugin : Plugin<Project> {
         })
         val extension = AnkExtension()
         target.extensions.add(EXTENSION_NAME, extension)
-        target.afterEvaluate { project ->
+        target.afterEvaluate { _ ->
             val task = target.tasks.create(TASK_NAME, JavaExec::class.java)
             task.classpath = extension.classpath
             task.main = "io.kategory.ank.main"
