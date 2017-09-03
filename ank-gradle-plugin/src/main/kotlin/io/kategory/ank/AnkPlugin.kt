@@ -12,7 +12,7 @@ class AnkPlugin : Plugin<Project> {
     companion object {
         private val EXTENSION_NAME = "ank"
         private val TASK_NAME = "runAnk"
-        private val ANK_CORE_DEPENDENCY = "io.kategory:ank-core:0.1.2"
+        private val ANK_CORE_DEPENDENCY = "io.kategory:ank-core:0.1.3"
     }
 
     override fun apply(target: Project) {

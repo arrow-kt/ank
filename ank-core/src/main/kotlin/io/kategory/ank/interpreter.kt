@@ -74,8 +74,12 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
         override fun visitNode(node: ASTNode) {
             if (node.type == CODE_FENCE) {
                 val fence = node.getTextInNode(source)
-                val code = fence.split("\n").drop(1).dropLast(1).joinToString("\n")
-                sb.add(Snippet(fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
+                if (fence.startsWith("```$AnkBlock")) {
+                    val code = fence.split("\n").drop(1).dropLast(1).joinToString("\n")
+                    sb.add(Snippet(fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
+                } else {
+                    println("skipped: \n $fence")
+                }
             }
             super.visitNode(node)
         }
