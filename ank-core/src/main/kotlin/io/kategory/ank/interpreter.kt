@@ -12,6 +12,7 @@ import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import javax.script.ScriptEngineManager
+import javax.script.ScriptException
 
 const val KotlinScriptEngineExtension = "kts"
 
@@ -64,6 +65,23 @@ fun readFileImpl(source: File): String =
 fun parseMarkDownImpl(markdown: String): ASTNode =
         MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
 
+data class CompilationException(
+        val snippet: Snippet,
+        val underlying: Throwable,
+        val msg: String = """
+            |
+            |
+            |### ΛNK Compilation Error ###
+            |```
+            |${snippet.code}
+            |```
+            |
+            |${underlying.message}
+            |##############################
+            |
+        """.trimMargin()) : ScriptException(msg) {
+    override fun toString(): String = msg
+}
 
 data class CompiledMarkdown(val origin: File, val snippets: ListKW<Snippet>)
 data class Snippet(val silent: Boolean, val startOffset: Int, val endOffset: Int, val code: String, val result: Option<String> = Option.None)
@@ -77,8 +95,6 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
                 if (fence.startsWith("```$AnkBlock")) {
                     val code = fence.split("\n").drop(1).dropLast(1).joinToString("\n")
                     sb.add(Snippet(fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
-                } else {
-                    println("skipped: \n $fence")
                 }
             }
             super.visitNode(node)
@@ -92,7 +108,9 @@ fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListK
     val seManager = ScriptEngineManager(classLoader)
     val engine = seManager.getEngineByExtension(KotlinScriptEngineExtension)!!
     val evaledSnippets = snippets.list.map { snippet ->
-        val result = engine.eval(snippet.code)
+        val result = Try { engine.eval(snippet.code) }.fold({
+            throw CompilationException(snippet, it)
+        }, { it })
         val resultString = Option.fromNullable(result).fold({ "// Unit" }, { "// $it" })
         if (snippet.silent) snippet
         else snippet.copy(result = "\n```kotlin\n$resultString\n```".some())
