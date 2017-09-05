@@ -18,6 +18,7 @@ buildscript {
 
 subprojects { project ->
 
+    ank_version = "0.1.6"
     apply plugin: 'com.jfrog.bintray'
     bintray {
         user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
