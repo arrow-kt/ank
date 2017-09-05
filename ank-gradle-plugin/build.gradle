@@ -1,8 +1,8 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 
-group = 'io.kategory'
-version = ank_version
+group = ext.ank_group
+version = ext.ank_version
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
