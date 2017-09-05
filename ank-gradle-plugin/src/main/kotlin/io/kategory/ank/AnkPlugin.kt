@@ -17,16 +17,18 @@ class AnkPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val compileDeps = target.configurations.getByName("compile").dependencies
+        val extension = AnkExtension()
+        target.extensions.add(EXTENSION_NAME, extension)
         target.gradle.addListener(object : DependencyResolutionListener {
             override fun beforeResolve(resolvableDependencies: ResolvableDependencies) {
-                compileDeps.add(target.dependencies.create(ANK_CORE_DEPENDENCY))
+                if (extension.includeAnkCore) {
+                    compileDeps.add(target.dependencies.create(ANK_CORE_DEPENDENCY))
+                }
                 target.gradle.removeListener(this)
             }
 
             override fun afterResolve(resolvableDependencies: ResolvableDependencies) {}
         })
-        val extension = AnkExtension()
-        target.extensions.add(EXTENSION_NAME, extension)
         target.afterEvaluate { _ ->
             val task = target.tasks.create(TASK_NAME, JavaExec::class.java)
             task.classpath = extension.classpath
