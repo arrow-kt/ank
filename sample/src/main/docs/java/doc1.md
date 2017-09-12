@@ -1,5 +1,6 @@
 Welcome to doc two
 
 ```java:ank
-int i = 3 + 3;
+int n = 3 + 3;
+n
 ```

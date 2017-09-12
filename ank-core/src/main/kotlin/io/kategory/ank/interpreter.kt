@@ -11,6 +11,8 @@ import org.intellij.markdown.parser.MarkdownParser
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.concurrent.ConcurrentHashMap
+import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
@@ -69,12 +71,15 @@ fun parseMarkDownImpl(markdown: String): ASTNode =
         MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
 
 data class CompilationException(
+        val engine: ScriptEngine?,
         val snippet: Snippet,
         val underlying: Throwable,
         val msg: String = """
             |
             |
             |### ΛNK Compilation Error ###
+            |engine: ${engine}
+            |lang: ${snippet.lang}
             |```
             |${snippet.code}
             |```
@@ -114,16 +119,22 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
     return sb.k()
 }
 
+val cachedEngines: ConcurrentHashMap<String, ScriptEngine> = ConcurrentHashMap()
+
 fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
     val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
     val seManager = ScriptEngineManager(classLoader)
     val evaledSnippets = snippets.list.map { snippet ->
         println("Extension found -> ${snippet.lang}")
         val result = Try {
-            val engine = seManager.getEngineByExtension(extensionMappings.getOrDefault(snippet.lang, "kts"))!!
-            println("Loaded script engine: $engine : extension -> ${snippet.lang}")
-            engine.eval(snippet.code) }.fold({
-            throw CompilationException(snippet, it)
+            val engine = cachedEngines.get(snippet.lang)
+            val resolvedEngine = if (engine != null) engine else {
+                seManager.getEngineByExtension(extensionMappings.getOrDefault(snippet.lang, "kts"))!!
+            }
+            cachedEngines.putIfAbsent(snippet.lang, resolvedEngine)
+            println("Loaded script engine: $resolvedEngine : extension -> ${snippet.lang}")
+            resolvedEngine.eval(snippet.code) }.fold({
+            throw CompilationException(cachedEngines.get(snippet.lang), snippet, it)
         }, { it })
         val resultString = Option.fromNullable(result).fold({ "Unit" }, { "$it" })
         if (snippet.silent) snippet

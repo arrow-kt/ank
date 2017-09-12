@@ -26,7 +26,7 @@ dependencies {
     compile "io.kategory:kategory-annotations:0.3.7"
     compile "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlin_version"
-    compile "org.patrodyne:patrodyne-scripting-java:1.0.0"
+    compile group: 'org.beanshell', name: 'bsh', version: '2.0b5'
     kapt "io.kategory:kategory-annotations-compile:0.3.7"
 
     testCompile "junit:junit:$parent.ext.junit_version"
