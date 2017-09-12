@@ -15,6 +15,7 @@ import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
 const val KotlinScriptEngineExtension = "kts"
+const val JavaScriptEngineExtension = "java"
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
@@ -106,7 +107,7 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
 fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
     val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
     val seManager = ScriptEngineManager(classLoader)
-    val engine = seManager.getEngineByExtension(KotlinScriptEngineExtension)!!
+    val engine = seManager.getEngineByExtension(JavaScriptEngineExtension)!!
     val evaledSnippets = snippets.list.map { snippet ->
         val result = Try { engine.eval(snippet.code) }.fold({
             throw CompilationException(snippet, it)

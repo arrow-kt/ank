@@ -22,7 +22,7 @@ dependencies {
 }
 
 ank {
-    source = file("src/main/docs")
+    source = file("src/main/docs/java")
     target = file("build/site")
     classpath = sourceSets.main.runtimeClasspath
 }
