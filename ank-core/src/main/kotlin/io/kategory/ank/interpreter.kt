@@ -14,8 +14,10 @@ import java.net.URLClassLoader
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 
-const val KotlinScriptEngineExtension = "kts"
-const val JavaScriptEngineExtension = "java"
+val extensionMappings = mapOf(
+        "java" to "java",
+        "kotlin" to "kts"
+)
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
@@ -85,7 +87,14 @@ data class CompilationException(
 }
 
 data class CompiledMarkdown(val origin: File, val snippets: ListKW<Snippet>)
-data class Snippet(val silent: Boolean, val startOffset: Int, val endOffset: Int, val code: String, val result: Option<String> = Option.None)
+
+data class Snippet(
+        val lang: String,
+        val silent: Boolean,
+        val startOffset: Int,
+        val endOffset: Int,
+        val code: String,
+        val result: Option<String> = Option.None)
 
 fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
     val sb = mutableListOf<Snippet>()
@@ -93,9 +102,10 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
         override fun visitNode(node: ASTNode) {
             if (node.type == CODE_FENCE) {
                 val fence = node.getTextInNode(source)
-                if (fence.startsWith("```$AnkBlock")) {
+                val lang = fence.takeWhile { it != ':' }.toString().replace("```", "")
+                if (fence.startsWith("```$lang$AnkBlock")) {
                     val code = fence.split("\n").drop(1).dropLast(1).joinToString("\n")
-                    sb.add(Snippet(fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
+                    sb.add(Snippet(lang, fence.startsWith("```$AnkSilentBlock"), node.startOffset, node.endOffset, code))
                 }
             }
             super.visitNode(node)
@@ -107,14 +117,17 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
 fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): CompiledMarkdown {
     val classLoader = URLClassLoader(compilerArgs.map { URL(it) }.ev().list.toTypedArray())
     val seManager = ScriptEngineManager(classLoader)
-    val engine = seManager.getEngineByExtension(JavaScriptEngineExtension)!!
     val evaledSnippets = snippets.list.map { snippet ->
-        val result = Try { engine.eval(snippet.code) }.fold({
+        println("Extension found -> ${snippet.lang}")
+        val result = Try {
+            val engine = seManager.getEngineByExtension(extensionMappings.getOrDefault(snippet.lang, "kts"))!!
+            println("Loaded script engine: $engine : extension -> ${snippet.lang}")
+            engine.eval(snippet.code) }.fold({
             throw CompilationException(snippet, it)
         }, { it })
-        val resultString = Option.fromNullable(result).fold({ "// Unit" }, { "// $it" })
+        val resultString = Option.fromNullable(result).fold({ "Unit" }, { "$it" })
         if (snippet.silent) snippet
-        else snippet.copy(result = "\n```kotlin\n$resultString\n```".some())
+        else snippet.copy(result = "\n```\n$resultString\n```".some())
     }.k()
     return CompiledMarkdown(origin, evaledSnippets)
 }
@@ -127,8 +140,8 @@ fun replaceAnkToKotlinImpl(compiledMarkdown: CompiledMarkdown): String =
                     .map { it.toCharArray().map { it } }
                     .fold({ acc + char }, { (acc + it) + char })
         }).joinToString("")
-                .replace(AnkSilentBlock, KotlinBlock)
-                .replace(AnkBlock, KotlinBlock)
+                .replace(AnkSilentBlock, "")
+                .replace(AnkBlock, "")
 
 fun generateFilesImpl(candidates: ListKW<File>, newContents: ListKW<String>): ListKW<File> =
         ListKW(candidates.mapIndexed { n, file ->

@@ -4,9 +4,8 @@ import kategory.*
 import org.intellij.markdown.ast.ASTNode
 import java.io.File
 
-const val AnkBlock = "kotlin:ank"
-const val AnkSilentBlock = "kotlin:ank:silent"
-const val KotlinBlock = "kotlin"
+const val AnkBlock = ":ank"
+const val AnkSilentBlock = ":ank:silent"
 
 fun ank(source: File, target: File, compilerArgs: ListKW<String>) =
         AnkOps.binding {

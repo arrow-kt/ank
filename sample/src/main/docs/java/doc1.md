@@ -1,5 +1,5 @@
 Welcome to doc two
 
-```kotlin:ank
+```java:ank
 int i = 3 + 3;
 ```

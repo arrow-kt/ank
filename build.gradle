@@ -37,7 +37,7 @@ allprojects {
 
     ext {
         ank_group = 'io.kategory'
-        ank_version = '0.1.6'
+        ank_version = '0.1.7-SNAPSHOT'
     }
 
     repositories {

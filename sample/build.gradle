@@ -17,12 +17,13 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$parent.ext.kotlin_version"
-
+    compile project(':ank-core')
     testCompile "junit:junit:$parent.ext.junit_version"
 }
 
 ank {
-    source = file("src/main/docs/java")
+    source = file("src/main/docs")
     target = file("build/site")
     classpath = sourceSets.main.runtimeClasspath
+    includeAnkCore = false
 }
