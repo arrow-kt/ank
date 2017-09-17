@@ -22,12 +22,12 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$parent.ext.kotlin_version"
     compile "org.jetbrains:markdown:0.1.25"
-    compile "io.kategory:kategory:0.3.5"
-    compile "io.kategory:kategory-annotations:0.3.7"
+    compile "io.kategory:kategory:0.3.8"
+    compile "io.kategory:kategory-annotations:0.3.8"
     compile "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlin_version"
     compile group: 'org.beanshell', name: 'bsh', version: '2.0b5'
-    kapt "io.kategory:kategory-annotations-compile:0.3.7"
+    kapt "io.kategory:kategory-annotations-processor:0.3.8"
 
     testCompile "junit:junit:$parent.ext.junit_version"
 }
