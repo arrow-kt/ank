@@ -11,7 +11,7 @@ import java.io.File
     data class ParseMarkdown(val markdown: String) : AnkOps<ASTNode>()
     data class ExtractCode(val source: String, val tree: ASTNode) : AnkOps<ListKW<Snippet>>()
     data class CompileCode(val origin: File, val snippets: ListKW<Snippet>, val compilerArgs: ListKW<String>) : AnkOps<CompiledMarkdown>()
-    data class ReplaceAnkToKotlin(val compilationResults: CompiledMarkdown) : AnkOps<String>()
+    data class ReplaceAnkToLang(val compilationResults: CompiledMarkdown) : AnkOps<String>()
     data class GenerateFiles(val candidates: ListKW<File>, val newContents: ListKW<String>) : AnkOps<ListKW<File>>()
     companion object : FreeInstances<AnkOpsHK>
 }
@@ -34,8 +34,8 @@ fun extractCode(source: String, tree: ASTNode): Free<AnkOpsHK, ListKW<Snippet>> 
 fun compileCode(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListKW<String>): Free<AnkOpsHK, CompiledMarkdown> =
         Free.liftF(AnkOps.CompileCode(origin, snippets, compilerArgs))
 
-fun replaceAnkToKotlin(compilationResults: CompiledMarkdown): Free<AnkOpsHK, String> =
-        Free.liftF(AnkOps.ReplaceAnkToKotlin(compilationResults))
+fun replaceAnkToLang(compilationResults: CompiledMarkdown): Free<AnkOpsHK, String> =
+        Free.liftF(AnkOps.ReplaceAnkToLang(compilationResults))
 
 fun generateFiles(candidates: ListKW<File>, newContents: ListKW<String>): Free<AnkOpsHK, ListKW<File>> =
         Free.liftF(AnkOps.GenerateFiles(candidates, newContents))

@@ -21,6 +21,11 @@ val extensionMappings = mapOf(
         "kotlin" to "kts"
 )
 
+val emptyEvalMappings = mapOf(
+        "java" to "void",
+        "kotlin" to "Unit"
+)
+
 @Suppress("UNCHECKED_CAST")
 inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
         object : FunctionK<AnkOpsHK, F> {
@@ -33,7 +38,7 @@ inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = m
                     is AnkOps.ParseMarkdown -> ME.catch({ parseMarkDownImpl(op.markdown) })
                     is AnkOps.ExtractCode -> ME.catch({ extractCodeImpl(op.source, op.tree) })
                     is AnkOps.CompileCode -> ME.catch({ compileCodeImpl(op.origin, op.snippets, op.compilerArgs) })
-                    is AnkOps.ReplaceAnkToKotlin -> ME.catch({ replaceAnkToKotlinImpl(op.compilationResults) })
+                    is AnkOps.ReplaceAnkToLang -> ME.catch({ replaceAnkToLangImpl(op.compilationResults) })
                     is AnkOps.GenerateFiles -> ME.catch({ generateFilesImpl(op.candidates, op.newContents) })
                 } as HK<F, A>
             }
@@ -136,14 +141,14 @@ fun compileCodeImpl(origin: File, snippets: ListKW<Snippet>, compilerArgs: ListK
             resolvedEngine.eval(snippet.code) }.fold({
             throw CompilationException(cachedEngines.get(snippet.lang), snippet, it)
         }, { it })
-        val resultString = Option.fromNullable(result).fold({ "Unit" }, { "$it" })
+        val resultString = Option.fromNullable(result).fold({ emptyEvalMappings.getOrDefault(snippet.lang, "") }, { "$it" })
         if (snippet.silent) snippet
         else snippet.copy(result = "\n```\n$resultString\n```".some())
     }.k()
     return CompiledMarkdown(origin, evaledSnippets)
 }
 
-fun replaceAnkToKotlinImpl(compiledMarkdown: CompiledMarkdown): String =
+fun replaceAnkToLangImpl(compiledMarkdown: CompiledMarkdown): String =
         compiledMarkdown.origin.readText().toCharArray().foldIndexed(emptyList<Char>(), { n, acc, char ->
             compiledMarkdown.snippets
                     .find { it.endOffset == n }
