@@ -13,7 +13,7 @@ import java.io.File
     data class CompileCode(val origin: File, val snippets: ListKW<Snippet>, val compilerArgs: ListKW<String>) : AnkOps<CompiledMarkdown>()
     data class ReplaceAnkToLang(val compilationResults: CompiledMarkdown) : AnkOps<String>()
     data class GenerateFiles(val candidates: ListKW<File>, val newContents: ListKW<String>) : AnkOps<ListKW<File>>()
-    companion object : FreeInstances<AnkOpsHK>
+    companion object : FreeMonadInstance<AnkOpsHK>
 }
 
 fun createTarget(source: File, target: File): Free<AnkOpsHK, File> =
