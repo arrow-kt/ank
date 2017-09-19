@@ -15,14 +15,17 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
-    maven { url 'https://kotlin.bintray.com/kotlinx' }
+    maven { url 'https://jitpack.io' }
+    maven { url 'http://dl.bintray.com/kotlin/kotlinx' }
     maven { url "http://dl.bintray.com/kategory/maven" }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$parent.ext.kotlin_version"
     compile "org.jetbrains:markdown:0.1.25"
-    compile "io.kategory:kategory:0.3.8"
+    compile ('io.kategory:kategory:master-SNAPSHOT') {
+        exclude group: "io.kategory.kategory", module: "kategory-docs"
+    }
     compile "io.kategory:kategory-annotations:0.3.8"
     compile "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlin_version"
