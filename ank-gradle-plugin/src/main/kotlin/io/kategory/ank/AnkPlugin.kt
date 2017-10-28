@@ -10,9 +10,9 @@ import org.gradle.api.tasks.JavaExec
 class AnkPlugin : Plugin<Project> {
 
     companion object {
-        private val EXTENSION_NAME = "ank"
-        private val TASK_NAME = "runAnk"
-        private val ANK_CORE_DEPENDENCY = "io.kategory:ank-core:0.1.6"
+        private const val EXTENSION_NAME = "ank"
+        private const val TASK_NAME = "runAnk"
+        private const val ANK_CORE_DEPENDENCY = "io.kategory:ank-core:0.1.6"
     }
 
     override fun apply(target: Project) {
@@ -29,16 +29,15 @@ class AnkPlugin : Plugin<Project> {
 
             override fun afterResolve(resolvableDependencies: ResolvableDependencies) {}
         })
-        target.afterEvaluate { _ ->
-            val task = target.tasks.create(TASK_NAME, JavaExec::class.java)
-            task.classpath = extension.classpath
-            task.main = "io.kategory.ank.main"
-            val args = mutableListOf(
+        target.afterEvaluate {
+            target.tasks.create(TASK_NAME, JavaExec::class.java).apply {
+                classpath = extension.classpath
+                main = "io.kategory.ank.main"
+            }.args = mutableListOf(
                     extension.source!!.absolutePath,
                     extension.target!!.absolutePath,
                     *extension.classpath!!.map { it.toURI().toURL().toString() }.toTypedArray()
             )
-            task.setArgs(args)
         }
     }
 }

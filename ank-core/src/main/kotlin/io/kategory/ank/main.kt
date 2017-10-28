@@ -4,8 +4,6 @@ package io.kategory.ank
 import kategory.*
 import java.io.File
 
-typealias Target<A> = Either<Throwable, A>
-
 fun main(vararg args: String) {
     when {
         args.size > 1 -> {
