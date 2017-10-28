@@ -4,7 +4,7 @@ import kategory.*
 import org.intellij.markdown.ast.ASTNode
 import java.io.File
 
-@higherkind sealed class AnkOps<A> : AnkOpsKind<A> {
+@higherkind sealed class AnkOps<out A> : AnkOpsKind<A> {
     data class CreateTarget(val source: File, val target: File) : AnkOps<File>()
     data class GetFileCandidates(val target: File) : AnkOps<ListKW<File>>()
     data class ReadFile(val source: File) : AnkOps<String>()

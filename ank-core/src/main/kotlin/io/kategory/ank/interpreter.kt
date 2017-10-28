@@ -22,14 +22,14 @@ inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = m
             override fun <A> invoke(fa: HK<AnkOpsHK, A>): HK<F, A> {
                 val op = fa.ev()
                 return when (op) {
-                    is AnkOps.CreateTarget -> ME.catch({ createTargetImpl(op.source, op.target) })
-                    is AnkOps.GetFileCandidates -> ME.catch({ getFileCandidatesImpl(op.target) })
-                    is AnkOps.ReadFile -> ME.catch({ readFileImpl(op.source) })
-                    is AnkOps.ParseMarkdown -> ME.catch({ parseMarkDownImpl(op.markdown) })
-                    is AnkOps.ExtractCode -> ME.catch({ extractCodeImpl(op.source, op.tree) })
-                    is AnkOps.CompileCode -> ME.catch({ compileCodeImpl(op.origin, op.snippets, op.compilerArgs) })
-                    is AnkOps.ReplaceAnkToKotlin -> ME.catch({ replaceAnkToKotlinImpl(op.compilationResults) })
-                    is AnkOps.GenerateFiles -> ME.catch({ generateFilesImpl(op.candidates, op.newContents) })
+                    is AnkOps.CreateTarget -> ME.catch { createTargetImpl(op.source, op.target) }
+                    is AnkOps.GetFileCandidates -> ME.catch { getFileCandidatesImpl(op.target) }
+                    is AnkOps.ReadFile -> ME.catch { readFileImpl(op.source) }
+                    is AnkOps.ParseMarkdown -> ME.catch { parseMarkDownImpl(op.markdown) }
+                    is AnkOps.ExtractCode -> ME.catch { extractCodeImpl(op.source, op.tree) }
+                    is AnkOps.CompileCode -> ME.catch { compileCodeImpl(op.origin, op.snippets, op.compilerArgs) }
+                    is AnkOps.ReplaceAnkToKotlin -> ME.catch { replaceAnkToKotlinImpl(op.compilationResults) }
+                    is AnkOps.GenerateFiles -> ME.catch { generateFilesImpl(op.candidates, op.newContents) }
                 } as HK<F, A>
             }
         }
@@ -66,9 +66,9 @@ fun parseMarkDownImpl(markdown: String): ASTNode =
         MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(markdown)
 
 data class CompilationException(
-        val snippet: Snippet,
-        val underlying: Throwable,
-        val msg: String = """
+        private val snippet: Snippet,
+        private val underlying: Throwable,
+        private val msg: String = """
             |
             |
             |### ΛNK Compilation Error ###
