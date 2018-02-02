@@ -9,15 +9,15 @@ permalink: /docs/datatypes/option/
 If you have worked with Java at all in the past, it is very likely that you have come across a `NullPointerException` at some time (other languages will throw similarly named errors in such a case). Usually this happens because some method returns `null` when you were not expecting it and thus not dealing with that possibility in your client code. A value of `null` is often abused to represent an absent optional value.
 Kotlin tries to solve the problem by getting rid of `null` values altogether and providing its own special syntax [Null-safety machinery based on `?`](https://kotlinlang.org/docs/reference/null-safety.html).
 
-Kategory models the absence of values through the `Option` datatype similar to how Scala, Haskell and other FP languages handle optional values.
+Arrow models the absence of values through the `Option` datatype similar to how Scala, Haskell and other FP languages handle optional values.
  
 `Option<A>` is a container for an optional value of type `A`. If the value of type `A` is present, the `Option<A>` is an instance of `Some<A>`, containing the present value of type `A`. If the value is absent, the `Option<A>` is the object `None`.
  
 
 
 ```kotlin:ank
-import kategory.*
-import kategory.Option.*
+import arrow.*
+import arrow.core.*
 
 val someValue: Option<String> = Some("I am wrapped in something")
 someValue
@@ -65,7 +65,7 @@ Option can also be used with when statements:
 ```kotlin:ank
 val someValue: Option<Double> = Some(20.0)
 when(someValue) {
-   is Some -> someValue.value
+   is Some -> someValue.t
    is None -> 0.0
 }
 ```
@@ -73,7 +73,7 @@ when(someValue) {
 ```kotlin:ank
 val noValue: Option<Double> = None
 when(noValue) {
-   is Some -> noValue.value
+   is Some -> noValue.t
    is None -> 0.0
 }
 ```
@@ -107,9 +107,11 @@ number.fold({ 1 }, { it * 3 })
 noNumber.fold({ 1 }, { it * 3 })
 ```
 
-Kategory also adds syntax to all datatypes so you can easily lift them into the context of `Option` where needed.
+Arrow also adds syntax to all datatypes so you can easily lift them into the context of `Option` where needed.
 
 ```kotlin:ank
+import arrow.syntax.option.*
+
 1.some()
 ```
 
@@ -117,13 +119,15 @@ Kategory also adds syntax to all datatypes so you can easily lift them into the 
 none<String>()
 ```
 
-Kategory contains `Option` instances for many useful typeclasses that allows you to use and transform optional values
+Arrow contains `Option` instances for many useful typeclasses that allows you to use and transform optional values
 
 [`Functor`](/docs/typeclasses/functor/)
 
 Transforming the inner contents
 
 ```kotlin:ank
+import arrow.typeclasses.*
+
 Option.functor().map(Option(1), { it + 1 })
 ```
 
@@ -132,6 +136,8 @@ Option.functor().map(Option(1), { it + 1 })
 Computing over independent values
 
 ```kotlin:ank
+import arrow.syntax.applicative.*
+
 Option.applicative().tupled(Option(1), Option("Hello"), Option(20.0))
 ```
 

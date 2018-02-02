@@ -6,19 +6,12 @@ sourceSets {
     test.java.srcDirs += 'src/test/kotlin'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
-repositories {
-    mavenLocal()
-    jcenter()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
-}
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$parent.ext.kotlin_version"
-
-    testCompile "junit:junit:$parent.ext.junit_version"
+    compile 'io.arrow-kt:ank-core:0.6.1'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }
 
 ank {

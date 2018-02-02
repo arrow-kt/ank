@@ -3,7 +3,9 @@ Welcome to doc one
 Text before x
 
 ```kotlin
-import kategory.*
+import arrow.*
+import arrow.data.*
+
 val x : Try<Int> = Try { 0 }
 ```
 
