@@ -1,19 +1,16 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 
-group = ext.ank_group
-version = ext.ank_version
+group = ext.ankGroup
+version = ext.ankVersion
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
     test.java.srcDirs += 'src/test/kotlin'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$parent.ext.kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$parent.ext.kotlinVersion"
     testCompile 'junit:junit:4.12'
 }
 
@@ -21,7 +18,7 @@ gradlePlugin {
     plugins {
         ank {
             id = 'ank-gradle-plugin'
-            implementationClass = 'io.kategory.ank.AnkPlugin'
+            implementationClass = 'arrow.ank.AnkPlugin'
         }
     }
 }

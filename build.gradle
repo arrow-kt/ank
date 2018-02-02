@@ -1,18 +1,23 @@
 buildscript {
     ext {
-        kotlin_version = '1.1.51'
-        junit_version = '4.12'
+        kotlinVersion = '1.2.20'
+        kotlinxCoroutinesVersion = '0.21.2'
+        javaVersion = JavaVersion.VERSION_1_7
     }
 
     repositories {
-        mavenLocal()
         jcenter()
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
         maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
+        maven { url "https://dl.bintray.com/arrow-kt/arrow-kt/" }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath group: 'io.kategory', name: 'ank-gradle-plugin', version: '0.1.6'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'io.arrow-kt:ank-gradle-plugin:0.6.1'
+        classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
 
@@ -24,11 +29,11 @@ subprojects { project ->
         key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
         configurations = ['archives']
         pkg {
-            repo = 'maven'
+            repo = 'arrow-kt'
             name = POM_ARTIFACT_ID
             userOrg = POM_DEVELOPER_ID
             licenses = ['Apache-2.0']
-            vcsUrl = 'https://github.com/kategory/ank.git'
+            vcsUrl = 'https://github.com/arrow-kt/ank.git'
         }
     }
 }
@@ -36,15 +41,17 @@ subprojects { project ->
 allprojects {
 
     ext {
-        ank_group = 'io.kategory'
-        ank_version = '0.1.6'
+        ankGroup = 'io.arrow-kt'
+        ankVersion = '0.6.2-SNAPSHOT'
     }
 
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://kotlin.bintray.com/kotlinx' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "http://dl.bintray.com/arrow-kt/arrow-kt" }
         maven { url "https://dl.bintray.com/jetbrains/markdown/" }
         maven { url 'https://jitpack.io' }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
-        maven { url "http://dl.bintray.com/kategory/maven" }
     }
 }
