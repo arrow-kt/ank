@@ -1,0 +1,16 @@
+// Masthead 
+// -----------------------------------------------
+// -----------------------------------------------
+#masthead {
+    position: relative;
+    padding: ($base-point-grid * 32)/*96px*/ 0;
+    background-color: $gray-primary;
+    text-align: center;
+    
+    .masthead-title {
+        font-size: 3rem; /*48px*/
+        font-weight: $font-regular;
+        line-height: 1.3;
+        color: $white;
+    }
+}

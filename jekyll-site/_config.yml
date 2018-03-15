@@ -1,0 +1,10 @@
+title: Λnk 
+name: Ank
+description: Compile time docs verification and evaluation for Kotlin and Java
+keywords: functional-programming, kotlin-library, monads, monad-transformers, functional-data-structure, kotlin, fp-types, adt, free-monads, tagless-final, mtl, for-comprehension, category-theory
+
+# Build settings
+markdown: kramdown
+sass:
+    sass_dir: _sass
+    style: compressed
