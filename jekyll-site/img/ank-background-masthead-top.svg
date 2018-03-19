@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="792" height="1064" viewBox="0 0 792 1064">
   <g fill="none" fill-rule="evenodd">
-    <polygon fill="#FC3" points="521.961 -528.294 15.39 9.636 466.39 191.206" transform="rotate(-5 268.676 -168.544)"/>
+    <polygon fill="#FC3" points="474.684 -592.666 -31.887 -54.736 419.113 126.834" transform="rotate(-17 221.399 -232.916)"/>
+    <polygon stroke="#FFF" stroke-width="2" points="499.875 -693.973 -108.125 -48.757 433.178 169.026" opacity=".322" transform="rotate(-17 195.875 -262.474)"/>
     <polygon fill="#FFA814" points="-274.612 -446.076 -254.748 328.748 161.252 104.748" transform="rotate(-121 -56.68 -58.664)"/>
-    <polygon fill="#F6850D" points="-436.904 -700.359 -446.373 328.16 129.627 24.16" opacity=".34" transform="rotate(168 -158.373 -186.1)"/>
-    <polygon stroke="#FFF" stroke-width="2" points="652 -726 236 -86 652 138" opacity=".322" transform="rotate(180 444 -294)"/>
-    <polygon stroke="#FFF" stroke-width="2" points="-271.687 -532.818 -271.687 331.182 144.313 107.182" opacity=".24" transform="rotate(-19 -63.687 -100.818)"/>
+    <polygon fill="#F6850D" points="-178.904 -493.74 -188.372 534.779 387.628 230.779" opacity=".34" transform="rotate(94 99.628 20.52)"/>
   </g>
 </svg>
