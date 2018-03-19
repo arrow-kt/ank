@@ -1,0 +1,24 @@
+// Features 
+// -----------------------------------------------
+// -----------------------------------------------
+.features {
+    padding: {
+        top: ($base-point-grid * 8);
+        /*64px*/
+        bottom: ($base-point-grid * 10);
+        /*80px*/
+    }
+    background: $white;
+    .feature-item {
+        text-align: center;
+        h2 {
+            margin: {
+                top: ($base-point-grid * 3);
+                /*24px*/
+                bottom: ($base-point-grid * 2);
+                /*16px*/
+            }
+            font-size: 1.25rem;
+        }
+    }
+}

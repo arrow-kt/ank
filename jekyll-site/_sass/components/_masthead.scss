@@ -3,14 +3,27 @@
 // -----------------------------------------------
 #masthead {
     position: relative;
-    padding: ($base-point-grid * 32)/*96px*/ 0;
+    padding-top: ($base-point-grid * 20)/*176px*/;
+    //background: url("../img/ank-background-masthead.svg") top right no-repeat;
     background-color: $gray-primary;
+    background-image: url("../img/ank-background-masthead.svg"), url("../img/ank-background-masthead-top.svg");
+    background-position: right bottom, left top;
+    background-repeat: no-repeat, no-repeat;
     text-align: center;
     
+
     .masthead-title {
-        font-size: 3rem; /*48px*/
+        margin: ($base-point-grid * 5)/*40px*/
+        0;
+        font-size: 3rem;
+        /*48px*/
         font-weight: $font-regular;
         line-height: 1.3;
         color: $white;
+    }
+    
+    > svg {
+        width: 100%;
+        height: auto
     }
 }

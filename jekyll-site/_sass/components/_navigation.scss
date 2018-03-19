@@ -6,10 +6,10 @@
     @include flexbox;
     @include justify-content(space-between);
     @include align-items(center);
-    z-index: 2;
     width: 100%;
     padding: ($base-point-grid * 5)/*40px*/($base-point-grid * 4)/*32px*/;
-    background: $gray-primary;
+    background: rgba($gray-primary, 0.5);
+    z-index: 2;
     .navigation-brand {}
     .navigation-menu {
         .navigation-menu-item {
@@ -26,7 +26,7 @@
                     color: $white;
                 }
                 &:hover {
-                    color: rgba($white, 0.5);
+                    color: $brand-primary;
                 }
                 &:active {
                     color: $white;

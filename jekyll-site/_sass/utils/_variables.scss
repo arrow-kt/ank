@@ -11,9 +11,10 @@ $brand-secondary: rgb(255, 168, 20);
 $brand-tertiary: rgb(246, 133, 13);
 $gray-primary: rgb(33, 45, 62);
 $gray-secondary: rgba($gray-primary, 0.88);
-$gray-tertiary: rgba($gray-primary, 0.78);
 $white: rgb(255, 255, 255);
-$link-color: $brand-secondary;
+$link-color: darken($brand-primary, 10%);
+$link-hover: darken($brand-primary, 15%);
+
 // Typography
 $base-font-family: 'Open Sans', sans-serif;
 $header-font-family: 'Montserrat', sans-serif;
