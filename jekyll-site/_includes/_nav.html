@@ -7,14 +7,10 @@
         </a>
     </div>
     <ul class="navigation-menu">
+        {% for item in site.data.nav.nav %}
         <li class="navigation-menu-item">
-            <a href="./docs">Documentation</a>
+            <a href="{{ item.url }}" alt="{{ item.title }}">{{ item.title }}</a>
         </li>
-        <li class="navigation-menu-item">
-            <a href="https://github.com/arrow-kt/ank">Github</a>
-        </li>
-        <li class="navigation-menu-item">
-            <a href="https://github.com/arrow-kt/ank#license">License</a>
-        </li>
+        {% endfor %}
     </ul>
 </nav>
