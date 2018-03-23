@@ -3,13 +3,14 @@
 // -----------------------------------------------
 .features {
     padding: {
-        top: ($base-point-grid * 8);
+        top: ($base-point-grid * 3);
         /*64px*/
         bottom: ($base-point-grid * 10);
         /*80px*/
     }
     background: $white;
     .feature-item {
+        margin-top: ($base-point-grid * 5);
         text-align: center;
         h2 {
             margin: {
@@ -19,6 +20,10 @@
                 /*16px*/
             }
             font-size: 1.25rem;
+        }
+        
+        p {
+            margin-bottom: ($base-point-grid * 2);
         }
     }
 }

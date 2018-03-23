@@ -22,9 +22,12 @@
     }
 
     &.button-large {
-        padding: ($base-point-grid * 2)/*16px*/
-        ($base-point-grid * 5)/*40px*/
-        ;
+        padding: ($base-point-grid * 2) ($base-point-grid * 5);
         font-size: 0.875rem;
     }
-}
+    
+    &.button-small {
+        padding: $base-point-grid ($base-point-grid * 3);
+        font-size: 0.75rem;
+    }
+} 
