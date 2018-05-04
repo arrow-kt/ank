@@ -1,7 +1,7 @@
 Some description here
 ```kotlin:ank
 import arrow.*
-import arrow.data.*
+import arrow.core.*
 
 val x = Try { 0 }
 ```

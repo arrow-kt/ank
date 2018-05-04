@@ -34,8 +34,7 @@ def getReleaseRepositoryUrl() {
 }
 
 def getSnapshotRepositoryUrl() {
-    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
-            : "https://oss.sonatype.org/content/repositories/snapshots/"
+    return findProperty('SNAPSHOT_REPOSITORY_URL') ?: "https://oss.jfrog.org/artifactory/oss-snapshot-local"
 }
 
 def obtainMavenLocalUrl() {

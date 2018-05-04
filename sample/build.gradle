@@ -10,8 +10,9 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 dependencies {
-    compile 'io.arrow-kt:ank-core:0.6.1'
+    compile 'io.arrow-kt:ank-core:0.7.0-SNAPSHOT'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    compile 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.0.0-beta.2'
 }
 
 ank {

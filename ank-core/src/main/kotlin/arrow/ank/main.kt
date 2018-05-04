@@ -1,13 +1,11 @@
 @file:JvmName("main")
 package arrow.ank
 
-import arrow.core.*
-import arrow.data.*
-import arrow.instances.*
-import arrow.free.*
-import arrow.ank.*
-import arrow.ank.ank
-import arrow.ank.ankMonadErrorInterpreter
+import arrow.core.Either
+import arrow.core.monadError
+import arrow.data.ListK
+import arrow.free.fix
+import arrow.core.fix
 import java.io.File
 
 typealias Target<A> = Either<Throwable, A>
@@ -16,9 +14,9 @@ fun main(vararg args: String) {
     when {
         args.size > 1 -> {
             val ME = Either.monadError<Throwable>()
-            ank(File(args[0]), File(args[1]), ListKW(args.drop(2)))
-                    .ev()
-                    .run(ankMonadErrorInterpreter(ME), ME).ev()
+            ank(File(args[0]), File(args[1]), ListK(args.drop(2)))
+                    .fix()
+                    .run(ME.ankMonadErrorInterpreter(), ME).fix()
                     .fold({ ex ->
                         throw ex
                     }, { files ->
