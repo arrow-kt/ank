@@ -1,17 +1,15 @@
 package arrow.ank
 
-import arrow.HK
+import arrow.Kind
 import arrow.core.FunctionK
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import arrow.data.ListKW
-import arrow.data.Try
-import arrow.data.ev
+import arrow.data.ListK
+import arrow.core.Try
+import arrow.data.fix
 import arrow.data.k
-import arrow.syntax.applicativeerror.catch
 import arrow.typeclasses.MonadError
-import arrow.typeclasses.monadError
 import com.github.born2snipe.cli.ProgressBarPrinter
 import org.intellij.markdown.MarkdownElementTypes.CODE_FENCE
 import org.intellij.markdown.ast.ASTNode
@@ -32,20 +30,20 @@ val extensionMappings = mapOf(
 )
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified F> ankMonadErrorInterpreter(ME: MonadError<F, Throwable> = monadError()): FunctionK<AnkOpsHK, F> =
-        object : FunctionK<AnkOpsHK, F> {
-            override fun <A> invoke(fa: HK<AnkOpsHK, A>): HK<F, A> {
-                val op = fa.ev()
+inline fun <reified F> MonadError<F, Throwable>.ankMonadErrorInterpreter(): FunctionK<ForAnkOps, F> =
+        object : FunctionK<ForAnkOps, F> {
+            override fun <A> invoke(fa: Kind<ForAnkOps, A>): Kind<F, A> {
+                val op = fa.fix()
                 return when (op) {
-                    is AnkOps.CreateTarget -> ME.catch({ createTargetImpl(op.source, op.target) })
-                    is AnkOps.GetFileCandidates -> ME.catch({ getFileCandidatesImpl(op.target) })
-                    is AnkOps.ReadFile -> ME.catch({ readFileImpl(op.source) })
-                    is AnkOps.ParseMarkdown -> ME.catch({ parseMarkDownImpl(op.markdown) })
-                    is AnkOps.ExtractCode -> ME.catch({ extractCodeImpl(op.source, op.tree) })
-                    is AnkOps.CompileCode -> ME.catch({ compileCodeImpl(op.snippets, op.compilerArgs) })
-                    is AnkOps.ReplaceAnkToLang -> ME.catch({ replaceAnkToLangImpl(op.compilationResults) })
-                    is AnkOps.GenerateFiles -> ME.catch({ generateFilesImpl(op.candidates, op.newContents) })
-                } as HK<F, A>
+                    is AnkOps.CreateTarget -> catch { createTargetImpl(op.source, op.target) }
+                    is AnkOps.GetFileCandidates -> catch { getFileCandidatesImpl(op.target) }
+                    is AnkOps.ReadFile -> catch { readFileImpl(op.source) }
+                    is AnkOps.ParseMarkdown -> catch { parseMarkDownImpl(op.markdown) }
+                    is AnkOps.ExtractCode -> catch { extractCodeImpl(op.source, op.tree) }
+                    is AnkOps.CompileCode -> catch { compileCodeImpl(op.snippets, op.compilerArgs) }
+                    is AnkOps.ReplaceAnkToLang -> catch { replaceAnkToLangImpl(op.compilationResults) }
+                    is AnkOps.GenerateFiles -> catch { generateFilesImpl(op.candidates, op.newContents) }
+                } as Kind<F, A>
             }
         }
 
@@ -67,8 +65,8 @@ fun createTargetImpl(source: File, target: File): File {
     return target
 }
 
-fun getFileCandidatesImpl(target: File): ListKW<File> =
-        ListKW(target.walkTopDown().filter {
+fun getFileCandidatesImpl(target: File): ListK<File> =
+        ListK(target.walkTopDown().filter {
             SupportedMarkdownExtensions.contains(it.extension.toLowerCase())
         }.toList())
 
@@ -88,7 +86,7 @@ data class CompilationException(
     override fun toString(): String = msg
 }
 
-data class CompiledMarkdown(val origin: File, val snippets: ListKW<Snippet>)
+data class CompiledMarkdown(val origin: File, val snippets: ListK<Snippet>)
 
 data class Snippet(
         val fence: String,
@@ -99,7 +97,7 @@ data class Snippet(
         val code: String,
         val result: Option<String> = None)
 
-fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
+fun extractCodeImpl(source: String, tree: ASTNode): ListK<Snippet> {
     val sb = mutableListOf<Snippet>()
     tree.accept(object : RecursiveVisitor() {
         override fun visitNode(node: ASTNode) {
@@ -117,7 +115,7 @@ fun extractCodeImpl(source: String, tree: ASTNode): ListKW<Snippet> {
     return sb.k()
 }
 
-fun compileCodeImpl(snippets: Map<File, ListKW<Snippet>>, classpath: ListKW<String>): ListKW<CompiledMarkdown> {
+fun compileCodeImpl(snippets: Map<File, ListK<Snippet>>, classpath: ListK<String>): ListK<CompiledMarkdown> {
     println(colored(ANSI_PURPLE, AnkHeader))
     val sortedSnippets = snippets.toList()
     val result = sortedSnippets.mapIndexed { n, (file, codeBlocks) ->
@@ -129,7 +127,7 @@ fun compileCodeImpl(snippets: Map<File, ListKW<Snippet>>, classpath: ListKW<Stri
 
         if (codeBlocks.isEmpty()) pb.step()
 
-        val classLoader = URLClassLoader(classpath.map { URL(it) }.ev().list.toTypedArray())
+        val classLoader = URLClassLoader(classpath.map { URL(it) }.fix().list.toTypedArray())
         val seManager = ScriptEngineManager(classLoader)
         val engineCache: Map<String, ScriptEngine> =
                 codeBlocks.list
@@ -138,7 +136,7 @@ fun compileCodeImpl(snippets: Map<File, ListKW<Snippet>>, classpath: ListKW<Stri
                             it.lang to seManager.getEngineByExtension(extensionMappings.getOrDefault(it.lang, "kts"))
                         }
                         .toMap()
-        val evaledSnippets: ListKW<Snippet> = codeBlocks.mapIndexed { blockIndex, snippet ->
+        val evaledSnippets: ListK<Snippet> = codeBlocks.mapIndexed { blockIndex, snippet ->
             val result: Any? = Try {
                 val engine: ScriptEngine = engineCache.k().getOrElse(
                         snippet.lang,
@@ -183,8 +181,8 @@ fun replaceAnkToLangImpl(compiledMarkdown: CompiledMarkdown): String =
             )
         })
 
-fun generateFilesImpl(candidates: ListKW<File>, newContents: ListKW<String>): ListKW<File> =
-        ListKW(candidates.mapIndexed { n, file ->
+fun generateFilesImpl(candidates: ListK<File>, newContents: ListK<String>): ListK<File> =
+        ListK(candidates.mapIndexed { n, file ->
             file.printWriter().use {
                 it.print(newContents.list[n])
             }
