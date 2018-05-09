@@ -1,4 +1,4 @@
-Welcome to doc two
+Welcome to doc jar
 
 ```java:ank
 import com.mapbox.api.directions.v5.MapboxDirections;
@@ -9,7 +9,7 @@ import retrofit2.Response;
 
 MapboxDirections.Builder builder = MapboxDirections.builder();
 
-builder.accessToken("");
+builder.accessToken("YOUR_MAPBOX_ACCESS_TOKEN_GOES_HERE");
 builder.origin(Point.fromLngLat(-95.6332, 29.7890));
 builder.destination(Point.fromLngLat(-95.3591, 29.7576));
 

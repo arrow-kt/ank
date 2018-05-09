@@ -7,7 +7,6 @@ buildscript {
 
     repositories {
         jcenter()
-        maven { url 'https://oss.jfrog.org/oss-snapshot-local/' }
         maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
         maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
@@ -18,7 +17,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'io.arrow-kt:ank-gradle-plugin:0.7.0-SNAPSHOT'
+        classpath 'io.arrow-kt:ank-gradle-plugin:0.7.1'
         classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }
@@ -44,12 +43,11 @@ allprojects {
 
     ext {
         ankGroup = 'io.arrow-kt'
-        ankVersion = '0.7.1-SNAPSHOT'
+        ankVersion = '0.7.2-SNAPSHOT'
     }
 
     repositories {
         jcenter()
-        maven { url 'https://oss.jfrog.org/oss-snapshot-local/' }
         maven { url 'https://maven.google.com' }
         maven { url 'https://kotlin.bintray.com/kotlinx' }
         maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
