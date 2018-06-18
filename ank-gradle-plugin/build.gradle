@@ -11,6 +11,7 @@ sourceSets {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$parent.ext.kotlinVersion"
+    compileOnly 'com.android.tools.build:gradle:2.3.3'
     testCompile 'junit:junit:4.12'
 }
 
