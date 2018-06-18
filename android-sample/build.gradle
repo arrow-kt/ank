@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'ank-gradle-plugin'
+apply plugin: 'ank-android-gradle-plugin'
 
 android {
     compileSdkVersion 27

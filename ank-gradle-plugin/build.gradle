@@ -21,6 +21,10 @@ gradlePlugin {
             id = 'ank-gradle-plugin'
             implementationClass = 'arrow.ank.AnkPlugin'
         }
+        ankAndroid {
+            id = 'ank-android-gradle-plugin'
+            implementationClass = 'arrow.ank.AnkAndroidPlugin'
+        }
     }
 }
 
