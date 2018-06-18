@@ -1,0 +1,20 @@
+apply plugin: 'kotlin'
+
+buildscript{
+    configure([repositories, project.repositories]) {
+        maven { url 'https://repo.gradle.org/gradle/repo' }
+    }
+    ext.kotlin_version = '1.2.20'
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply from: '../ank-gradle-plugin/dependencies.gradle'
+
+sourceSets {
+    main {
+        kotlin.srcDirs += '../ank-gradle-plugin/src/main/kotlin'
+        resources.srcDirs += '../ank-gradle-plugin/src/main/resources'
+    }
+}

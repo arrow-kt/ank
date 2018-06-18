@@ -24,7 +24,8 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'io.arrow-kt:ank-core:0.6.1'
+    // Uses buildSrc for development instead
+    // compile 'io.arrow-kt:ank-core:0.6.1'
 }
 
 ank {

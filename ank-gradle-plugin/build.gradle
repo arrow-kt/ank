@@ -9,10 +9,7 @@ sourceSets {
     test.java.srcDirs += 'src/test/kotlin'
 }
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$parent.ext.kotlinVersion"
-    testCompile 'junit:junit:4.12'
-}
+apply from: "dependencies.gradle"
 
 gradlePlugin {
     plugins {

@@ -10,7 +10,8 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 dependencies {
-    compile 'io.arrow-kt:ank-core:0.6.1'
+    // Uses buildSrc for development instead
+    // compile 'io.arrow-kt:ank-core:0.6.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 }
 
