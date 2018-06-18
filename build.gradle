@@ -1,19 +1,7 @@
 buildscript {
-    ext {
-        kotlinVersion = '1.2.20'
-        kotlinxCoroutinesVersion = '0.21.2'
-        javaVersion = JavaVersion.VERSION_1_7
-    }
+    apply from: file("extensions.gradle")
+    apply from: file("repositories.gradle")
 
-    repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
-        maven { url 'https://jitpack.io' }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
-        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
-        maven { url "https://dl.bintray.com/arrow-kt/arrow-kt/" }
-        maven { url "https://dl.bintray.com/macroing-org/CEL4J-Artifact/" }
-    }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
@@ -23,6 +11,8 @@ buildscript {
 }
 
 subprojects { project ->
+
+    apply from: file("repositories.gradle")
 
     apply plugin: 'com.jfrog.bintray'
     bintray {
@@ -36,23 +26,5 @@ subprojects { project ->
             licenses = ['Apache-2.0']
             vcsUrl = 'https://github.com/arrow-kt/ank.git'
         }
-    }
-}
-
-allprojects {
-
-    ext {
-        ankGroup = 'io.arrow-kt'
-        ankVersion = '0.7.2-SNAPSHOT'
-    }
-
-    repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
-        maven { url 'https://kotlin.bintray.com/kotlinx' }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
-        maven { url "http://dl.bintray.com/arrow-kt/arrow-kt" }
-        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
-        maven { url 'https://jitpack.io' }
     }
 }

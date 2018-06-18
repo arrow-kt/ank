@@ -1,0 +1,6 @@
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation project(':ank-core')
+    implementation 'com.android.tools.build:gradle:3.1.3'
+    testImplementation 'junit:junit:4.12'
+}

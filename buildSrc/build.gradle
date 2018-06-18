@@ -1,0 +1,36 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'kotlin'
+
+buildscript{
+    configure([repositories, project.repositories]) {
+        maven { url 'https://repo.gradle.org/gradle/repo' }
+    }
+    apply from: file("../extensions.gradle")
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply from: file("../repositories.gradle")
+
+apply from: '../ank-gradle-plugin/dependencies.gradle'
+
+sourceSets {
+    main {
+        kotlin.srcDirs += '../ank-gradle-plugin/src/main/kotlin'
+        resources.srcDirs += '../ank-gradle-plugin/src/main/resources'
+    }
+}
+
+gradlePlugin {
+    plugins {
+        ank {
+            id = 'ank-gradle-plugin'
+            implementationClass = 'arrow.ank.AnkPlugin'
+        }
+        ankAndroid {
+            id = 'ank-android-gradle-plugin'
+            implementationClass = 'arrow.ank.AnkAndroidPlugin'
+        }
+    }
+}

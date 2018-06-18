@@ -3,7 +3,7 @@ apply plugin: 'ank-android-gradle-plugin'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         minSdkVersion 15
@@ -23,10 +23,11 @@ android {
 }
 
 dependencies {
-    compile 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.0.0-beta.2'
-    compile 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'io.arrow-kt:ank-core:0.7.1'
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:3.0.0-beta.2'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    // Uses buildSrc for development instead
+    // implementation 'io.arrow-kt:ank-core:0.7.1'
 }
 
 ank {

@@ -1,0 +1,4 @@
+include ":ank-core"
+
+ProjectDescriptor ankCore = project(':ank-core')
+ankCore.projectDir = file('../ank-core')

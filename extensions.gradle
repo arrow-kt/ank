@@ -1,0 +1,8 @@
+ext {
+    kotlinVersion = '1.2.20'
+    kotlinxCoroutinesVersion = '0.21.2'
+    javaVersion = JavaVersion.VERSION_1_7
+
+    ankGroup = 'io.arrow-kt'
+    ankVersion = '0.7.2-SNAPSHOT'
+}
