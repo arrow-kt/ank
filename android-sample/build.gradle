@@ -1,6 +1,22 @@
 apply plugin: 'com.android.library'
 apply plugin: 'ank-android-gradle-plugin'
 
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "https://dl.bintray.com/jetbrains/markdown/" }
+        maven { url "https://dl.bintray.com/arrow-kt/arrow-kt/" }
+        maven { url "https://dl.bintray.com/macroing-org/CEL4J-Artifact/" }
+    }
+    dependencies {
+        classpath 'io.arrow-kt:ank-gradle-plugin:0.7.2-SNAPSHOT'
+    }
+}
+
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
@@ -27,7 +43,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.13.0'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     // Uses buildSrc for development instead
-    // implementation 'io.arrow-kt:ank-core:0.7.1'
+    implementation 'io.arrow-kt:ank-core:0.7.2-SNAPSHOT'
 }
 
 ank {

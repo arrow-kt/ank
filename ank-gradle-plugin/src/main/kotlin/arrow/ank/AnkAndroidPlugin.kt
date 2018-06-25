@@ -26,7 +26,7 @@ class AnkAndroidPlugin : Plugin<Project> {
             classpath = files(scope.classpath)
             main = "arrow.ank.main"
             args = ankArguments(
-                source = scope.javaOutputDir, //extension.source ?: File("."),
+                source = extension.source ?: File("."), //scope.javaOutputDir,
                 target = File(extension.target ?: File("."), "/${scope.fullVariantName}"),
                 classpath = scope.classpath
             )
