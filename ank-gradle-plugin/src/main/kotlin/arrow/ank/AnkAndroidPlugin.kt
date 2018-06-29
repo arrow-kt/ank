@@ -5,6 +5,7 @@ import com.android.build.gradle.internal.scope.VariantScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import java.io.File
 
@@ -15,12 +16,14 @@ class AnkAndroidPlugin : Plugin<Project> {
         extensions.add("ank", extension)
         afterEvaluate {
             plugins.findPlugin(LibraryPlugin::class.java)?.variantScopes
-                ?.forEach { scope -> createAnkTask(scope, extension) }
+                ?.forEach { scope ->
+                    createAnkTask(scope, extension).dependsOn(listOf(createUnzipTask(scope)))
+                }
                 ?: error("Android library plugin not found")
         }
     }
 
-    private fun Project.createAnkTask(scope: VariantScope, extension: AnkExtension) {
+    private fun Project.createAnkTask(scope: VariantScope, extension: AnkExtension) =
         task<JavaExec>(scope.variantData.getTaskName("runAnk", "")) {
             group = "ank"
             classpath = files(scope.classpath)
@@ -28,11 +31,25 @@ class AnkAndroidPlugin : Plugin<Project> {
             args = ankArguments(
                 source = extension.source ?: File("."), //scope.javaOutputDir,
                 target = File(extension.target ?: File("."), "/${scope.fullVariantName}"),
-                classpath = scope.classpath
+                classpath = scope.classpath + files("$buildDir/unzipped/")
             )
         }
-    }
 
+    private fun Project.createUnzipTask(scope: VariantScope) =
+            task(scope.variantData.getTaskName("runUnzip", ""))
+                    .dependsOn(scope.classpath.distinctBy { it ->  it.name }.filter{
+                        it.toString().endsWith(".aar")
+                    }.map {
+                        createCopyTask(scope, it)
+                    }
+            )
+
+    private fun Project.createCopyTask(scope: VariantScope, file: File) =
+            task<Copy>(scope.variantData.getTaskName("runCopy", "${file.name}")) {
+                from(zipTree(file))
+                include("*.jar")
+                into("$buildDir/unzipped/${file.name}")
+            }
 }
 
 private val LibraryPlugin.variantScopes
