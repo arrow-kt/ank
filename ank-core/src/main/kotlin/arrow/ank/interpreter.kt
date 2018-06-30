@@ -18,6 +18,7 @@ import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.ast.visitors.RecursiveVisitor
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
@@ -147,6 +148,7 @@ fun compileCodeImpl(snippets: Map<File, ListK<Snippet>>, classpath: ListK<String
                                     underlying = IllegalStateException("No engine configured for `${snippet.lang}`"),
                                     msg = colored(ANSI_RED, "ΛNK compilation failed [ ${file.parentFile.name}/${file.name} ]"))
                         })
+                setIdeaIoUseFallback() // required for windows: https://discuss.kotlinlang.org/t/kotlin-script-engine-error/5654
                 val result = engine.eval(snippet.code)
                 pb.step()
                 result
