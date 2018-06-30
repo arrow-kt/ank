@@ -48,7 +48,8 @@ class AnkAndroidPlugin : Plugin<Project> {
             task<Copy>(scope.variantData.getTaskName("runCopy", "${file.name}")) {
                 from(zipTree(file))
                 include("*.jar")
-                into("$buildDir/unzipped/${file.name}")
+                rename("classes.jar", file.name.replace("aar", "jar"))
+                into("$buildDir/unzipped")
             }
 }
 
@@ -65,6 +66,5 @@ private fun Set<File>.toPathArray(): Array<String> =
     map { it.toURI().toURL().toString() }.toTypedArray()
 
 private val VariantScope.classpath
-    get() =
-        variantData.variantDependency.compileClasspath.resolve()
+    get() = variantData.variantDependency.compileClasspath.resolve()
 
