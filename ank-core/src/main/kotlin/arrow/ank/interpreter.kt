@@ -148,7 +148,7 @@ fun compileCodeImpl(snippets: Map<File, ListK<Snippet>>, classpath: ListK<String
                                     underlying = IllegalStateException("No engine configured for `${snippet.lang}`"),
                                     msg = colored(ANSI_RED, "ΛNK compilation failed [ ${file.parentFile.name}/${file.name} ]"))
                         })
-                setIdeaIoUseFallback() // required for windows: https://discuss.kotlinlang.org/t/kotlin-script-engine-error/5654
+                setIdeaIoUseFallback() // required for windows:
                 val result = engine.eval(snippet.code)
                 pb.step()
                 result
