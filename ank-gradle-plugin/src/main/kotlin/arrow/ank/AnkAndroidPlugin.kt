@@ -38,23 +38,21 @@ class AnkAndroidPlugin : Plugin<Project> {
             )
         }.doFirst {
             scope.classpath
-                .distinctBy { it -> it.name }
+                .distinctBy { it.name }
                 .filter { it.toString().endsWith(".aar") }
-                .forEach(File::unzipClassesFromArtifact)
+                .map { ZipFile(it) to File(it.absolutePath.replace("aar", "jar")) }
+                .mapNotNull { (zip, outFile) -> zip.unzipClassesJar(to = outFile) }
+                .map(::ZipFile)
         }
 
 }
 
-private fun File.unzipClassesFromArtifact() = with(ZipFile(this)) {
-    entries()
-        .asSequence()
-        .filter { it.name == "classes.jar" }
-        .forEach { entry: ZipEntry ->
-            extract(from = entry, to = File(absolutePath.replace("aar", "jar")))
-        }
-}
+private fun ZipFile.unzipClassesJar(to : File): File? = entries()
+    .asSequence()
+    .firstOrNull { it.name == "classes.jar" }
+    ?.let { extract(from = it, to = to) }
 
-private fun ZipFile.extract(from: ZipEntry, to: File) = to.apply {
+private fun ZipFile.extract(from: ZipEntry, to: File): File = to.apply {
     parentFile.mkdirs()
     createNewFile()
     outputStream().use { output ->
