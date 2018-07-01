@@ -5,9 +5,10 @@ import com.android.build.gradle.internal.scope.VariantScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 class AnkAndroidPlugin : Plugin<Project> {
 
@@ -17,13 +18,13 @@ class AnkAndroidPlugin : Plugin<Project> {
         afterEvaluate {
             plugins.findPlugin(LibraryPlugin::class.java)?.variantScopes
                 ?.forEach { scope ->
-                    createAnkTask(scope, extension).dependsOn(listOf(createUnzipTask(scope)))
+                    createAnkTask(scope, extension)//.dependsOn(listOf(createUnzipTask(scope)))
                 }
                 ?: error("Android library plugin not found")
         }
     }
 
-    private fun Project.createAnkTask(scope: VariantScope, extension: AnkExtension) =
+    private fun Project.createAnkTask(scope: VariantScope, extension: AnkExtension): Task? =
         task<JavaExec>(scope.variantData.getTaskName("runAnk", "")) {
             group = "ank"
             classpath = files(scope.classpath)
@@ -31,26 +32,36 @@ class AnkAndroidPlugin : Plugin<Project> {
             args = ankArguments(
                 source = extension.source ?: File("."), //scope.javaOutputDir,
                 target = File(extension.target ?: File("."), "/${scope.fullVariantName}"),
-                classpath = scope.classpath + files("$buildDir/unzipped/")
+                classpath = scope.classpath.map {
+                    File(it.absolutePath.replace(".aar", ".jar"))
+                }.toSet()
             )
+        }.doFirst {
+            scope.classpath
+                .distinctBy { it -> it.name }
+                .filter { it.toString().endsWith(".aar") }
+                .forEach(File::unzipClassesFromArtifact)
         }
 
-    private fun Project.createUnzipTask(scope: VariantScope) =
-            task(scope.variantData.getTaskName("runUnzip", ""))
-                    .dependsOn(scope.classpath.distinctBy { it ->  it.name }.filter{
-                        it.toString().endsWith(".aar")
-                    }.map {
-                        createCopyTask(scope, it)
-                    }
-            )
+}
 
-    private fun Project.createCopyTask(scope: VariantScope, file: File) =
-            task<Copy>(scope.variantData.getTaskName("runCopy", "${file.name}")) {
-                from(zipTree(file))
-                include("*.jar")
-                rename("classes.jar", file.name.replace("aar", "jar"))
-                into("$buildDir/unzipped")
-            }
+private fun File.unzipClassesFromArtifact() = with(ZipFile(this)) {
+    entries()
+        .asSequence()
+        .filter { it.name == "classes.jar" }
+        .forEach { entry: ZipEntry ->
+            extract(from = entry, to = File(absolutePath.replace("aar", "jar")))
+        }
+}
+
+private fun ZipFile.extract(from: ZipEntry, to: File) = to.apply {
+    parentFile.mkdirs()
+    createNewFile()
+    outputStream().use { output ->
+        getInputStream(from).use { input ->
+            input.copyTo(output)
+        }
+    }
 }
 
 private val LibraryPlugin.variantScopes
