@@ -7,6 +7,14 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.JavaExec
 import java.io.File
+import java.net.URI
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption.APPEND
+import java.nio.file.StandardOpenOption.CREATE
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
@@ -42,12 +50,39 @@ class AnkAndroidPlugin : Plugin<Project> {
                 .filter { it.toString().endsWith(".aar") }
                 .map { ZipFile(it) to File(it.absolutePath.replace("aar", "jar")) }
                 .mapNotNull { (zip, outFile) -> zip.unzipClassesJar(to = outFile) }
-                .map(::ZipFile)
+                .map(File::toFileSystem)
+                .forEach(FileSystem::createManifestFile)
         }
 
 }
 
-private fun ZipFile.unzipClassesJar(to : File): File? = entries()
+private fun FileSystem.createManifestFile() = use { fs ->
+    fs.getPath("META-INF/MANIFEST.MF")
+        .also { path ->
+            generateSequence(path.parent) { it.parent }
+                .filter { Files.notExists(it) }
+                .forEach { Files.createDirectory(it) }
+            if (Files.notExists(path)) Files.createFile(path)
+        }
+        .let { Files.newBufferedWriter(it, UTF_8, CREATE, APPEND) }
+        .use {
+            it.write("Manifest-Version: 1.0\n")
+        }
+}
+
+private fun File.toFileSystem(): FileSystem =
+    URI.create("jar:${Paths.get(toURI()).toUri()}")
+        .let { uri ->
+            //FileSystems.getFileSystem(uri)
+            try {
+                FileSystems.newFileSystem(uri, mapOf("create" to "true"))
+            } catch (e: java.nio.file.FileAlreadyExistsException) {
+                e.printStackTrace()
+                FileSystems.getFileSystem(uri)
+            }
+        }
+
+private fun ZipFile.unzipClassesJar(to: File): File? = entries()
     .asSequence()
     .firstOrNull { it.name == "classes.jar" }
     ?.let { extract(from = it, to = to) }
