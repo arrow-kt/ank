@@ -14,15 +14,22 @@ fun main(vararg args: String) {
     when {
         args.size > 1 -> {
             val ME = Either.monadError<Throwable>()
-            ank(File(args[0]), File(args[1]), ListK(args.drop(2)))
-                    .fix()
-                    .run(ME.ankMonadErrorInterpreter(), ME).fix()
-                    .fold({ ex ->
-                        throw ex
-                    }, { files ->
-                        println("ΛNK Generated:\n\t${files.joinToString(separator = "\n\t")}")
-                    })
+            ank(
+                source = File(args[0]),
+                target = File(args[1]),
+                compilerArgs = ListK(args.drop(2).flattenDirectoryPath())
+            ).fix()
+                .run(ME.ankMonadErrorInterpreter(), ME).fix()
+            .fold({ ex ->
+                throw ex
+            }, { files ->
+                println("ΛNK Generated:\n\t${files.joinToString(separator = "\n\t")}")
+            })
         }
         else -> throw IllegalArgumentException("Required first 2 args as directory paths in this order: <required: source> <required: destination> <optional: classpath entries, one per arg..>")
     }
+}
+
+private fun List<String>.flattenDirectoryPath(): List<String> = flatMap {
+    listOf(it) + File(it).walk().map { it.absolutePath }
 }
