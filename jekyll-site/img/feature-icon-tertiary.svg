@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="89" viewBox="0 0 88 89">
+  <g fill="none" fill-rule="evenodd">
+    <polygon fill="#FC3" points="43 18 76 77 10 77"/>
+    <polygon fill="#FFA814" points="43 6 86 83 43 83" opacity=".5" transform="rotate(33 64.5 44.5)"/>
+    <path fill="#FFF" d="M33,49 L53,49 L53,53 L33,53 L33,49 Z M46,50 L46,52 L51,52 L51,50 L46,50 Z M33,55 L53,55 L53,59 L33,59 L33,55 Z M38,56 L38,58 L51,58 L51,56 L38,56 Z M33,61 L53,61 L53,65 L33,65 L33,61 Z M43,62 L43,64 L51,64 L51,62 L43,62 Z"/>
+  </g>
+</svg>
