@@ -2,5 +2,4 @@ rootProject.name = 'ank'
 include 'ank-core'
 include 'ank-gradle-plugin'
 include 'sample'
-include ':android-sample'
 

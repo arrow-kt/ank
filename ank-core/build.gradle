@@ -20,17 +20,18 @@ kotlin {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$parent.ext.kotlinVersion"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
-    compile "org.jetbrains:markdown:0.1.25"
-    compile group: 'com.github.born2snipe', name: 'cli-progress', version: '0.4'
-    compile 'io.arrow-kt:arrow-free:0.6.1'
-    compile 'io.arrow-kt:arrow-data:0.6.1'
-    compile 'io.arrow-kt:arrow-syntax:0.6.1'
-    compile "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlinVersion"
-    compile "org.apache-extras.beanshell:bsh:2.0b6"
-    kapt    'io.arrow-kt:arrow-annotations-processor:0.6.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$parent.ext.kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
+    implementation "org.jetbrains:markdown:0.1.25"
+    implementation "com.github.born2snipe:cli-progress:0.4"
+    implementation 'io.arrow-kt:arrow-free:0.7.1'
+    implementation 'io.arrow-kt:arrow-instances-core:0.7.1'
+    implementation 'io.arrow-kt:arrow-data:0.7.1'
+    implementation 'io.arrow-kt:arrow-instances-data:0.7.1'
+    implementation "org.jetbrains.kotlin:kotlin-compiler:$parent.ext.kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-script-util:$parent.ext.kotlinVersion"
+    implementation 'org.macroing:cel4j-artifact:0.5.0'
+    kapt    'io.arrow-kt:arrow-annotations-processor:0.7.1'
 }
 
 apply from: '../gradle-mvn-push.gradle'
